@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String
+  createdAT DateTime? @default(now()) @db.Timestamp(6)
+
+  @@map("users")
+}
+
+model Teacher {
+  id          Int                   @id @default(autoincrement())
+  name        String                @unique
+  createdAT   DateTime?             @default(now()) @db.Timestamp(6)
+  discipline  TeacherDiscipline[]
+
+  @@map("teachers")
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAT DateTime? @default(now()) @db.Timestamp(6)
+  tests     Test[]
+
+  @@map("categories")
+}
+
+model Term {
+  id            Int           @id @default(autoincrement())
+  number        Int           @unique
+  createdAT     DateTime?     @default(now()) @db.Timestamp(6)
+  disciplines   Discipline[]
+
+  @@map("terms")
+}
+
+model Discipline {
+  id        Int                   @id @default(autoincrement())
+  name      String                @unique
+  termId    Int       
+  createdAT DateTime?             @default(now()) @db.Timestamp(6)
+  term      Term                  @relation(fields: [termId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teacher   TeacherDiscipline[]
+
+  @@map("disciplines")
+}
+
+model TeacherDiscipline {
+  id              Int         @id @default(autoincrement())
+  teacherId       Int    
+  disciplineId    Int       
+  createdAT       DateTime?   @default(now()) @db.Timestamp(6)
+  teacher         Teacher     @relation(fields: [teacherId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  discipline      Discipline  @relation(fields: [disciplineId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tests           Test[]
+
+  @@map("teachersDisciplines")
+}
+
+model Test {
+  id                    Int                @id @default(autoincrement())
+  name                  String
+  pdfUrl                String    
+  categoryId            Int 
+  teacherDisciplineId   Int 
+  createdAT             DateTime?          @default(now()) @db.Timestamp(6)
+  category              Category           @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teacherDiscipline     TeacherDiscipline  @relation(fields: [teacherDisciplineId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@map("tests")
+}
