@@ -1,6 +1,8 @@
 import Joi from "joi";
 
-const signInSchema = Joi.object<{email: string, password: string, repeatedPassword: string}>({
+import { CreateUser } from "../services/accessService";
+
+const signInSchema = Joi.object<CreateUser>({
     email: Joi.string().email().required(),
     password: Joi.string().required()
 });
