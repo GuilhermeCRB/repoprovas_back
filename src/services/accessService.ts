@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import { Response } from "express";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 import accessRepository from "../repositories/accessRepository.js";
@@ -17,8 +18,9 @@ function encryptPassword(password: string) {
     return bcrypt.hashSync(password, SALT);
 }
 
-async function signInUser(res: Response, user: CreateUser){
+async function signInUser(res: Response, user: CreateUser) {
     const tokenInfo = await matchEmailAndPassword(res, user);
+    return generateToken(tokenInfo);
 }
 
 async function matchEmailAndPassword(res: Response, user: CreateUser) {
@@ -26,9 +28,12 @@ async function matchEmailAndPassword(res: Response, user: CreateUser) {
     const isValidated: boolean = bcrypt.compareSync(user.password, userFromDb.password);
     if (!userFromDb || !isValidated) return res.status(401).send("Not allowed. Check your email and password.");
 
-    return {id: userFromDb.id, email: userFromDb.email};
+    return { id: userFromDb.id, email: userFromDb.email };
 }
 
+function generateToken(user) {
+    return jwt.sign(user, process.env.SECRET_KEY);
+}
 
 const accessService = {
     signUpUser,
