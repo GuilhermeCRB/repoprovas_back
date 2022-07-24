@@ -1,4 +1,5 @@
 import { User } from "@prisma/client";
+import { Response } from "express";
 import bcrypt from "bcrypt";
 
 import accessRepository from "../repositories/accessRepository.js";
@@ -16,8 +17,22 @@ function encryptPassword(password: string) {
     return bcrypt.hashSync(password, SALT);
 }
 
+async function signInUser(res: Response, user: CreateUser){
+    const tokenInfo = await matchEmailAndPassword(res, user);
+}
+
+async function matchEmailAndPassword(res: Response, user: CreateUser) {
+    const userFromDb: User = await accessRepository.getUserByEmail(user.email);
+    const isValidated: boolean = bcrypt.compareSync(user.password, userFromDb.password);
+    if (!userFromDb || !isValidated) return res.status(401).send("Not allowed. Check your email and password.");
+
+    return {id: userFromDb.id, email: userFromDb.email};
+}
+
+
 const accessService = {
-    signUpUser
+    signUpUser,
+    signInUser
 };
 
 export default accessService;
