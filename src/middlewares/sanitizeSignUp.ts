@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { stripHtml } from "string-strip-html";
 
-export function sanitizeSignUp(req: Request, res: Response, next: NextFunction) {
-    const signUpUser: {email: string, password: string, repeatedPassword: string } = req.body;
+import { CreateUser } from "../services/accessService.js";
 
-    const user = {
+export function sanitizeSignUp(req: Request, res: Response, next: NextFunction) {
+    const signUpUser: CreateUser = req.body;
+
+    const user: CreateUser = {
         ...signUpUser,
         email: stripHtml(signUpUser.email).result,
         password: stripHtml(signUpUser.password).result,
