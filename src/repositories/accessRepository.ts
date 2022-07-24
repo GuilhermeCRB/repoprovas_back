@@ -8,7 +8,14 @@ async function saveUserData(userData: CreateUser) {
     });
 }
 
+async function getUserByEmail(email: string) {
+    return await db.user.findUnique({
+        where: { email }
+    });
+}
+
 const accessRepository = {
+    getUserByEmail,
     saveUserData
 }
 

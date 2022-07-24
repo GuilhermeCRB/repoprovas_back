@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 
 import accessRepository from "../repositories/accessRepository.js";
 
-export type CreateUser = Omit<User & {repeatedPassword?: string}, "id" | "createdAT">
+export type CreateUser = Omit<User & { repeatedPassword?: string }, "id" | "createdAT">
 
 async function signUpUser(user: CreateUser) {
     delete user.repeatedPassword;
