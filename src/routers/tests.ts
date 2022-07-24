@@ -1,9 +1,16 @@
 import { Router } from "express";
+import validateToken from "../middlewares/validateToken";
 
 const tests = Router();
 
-tests.post("/tests");
-tests.get("/tests/disciplines");
-tests.get("/tests/teachers");
+tests.post("/tests",
+    validateToken
+);
+tests.get("/tests/disciplines",
+    validateToken
+);
+tests.get("/tests/teachers",
+    validateToken
+);
 
 export default tests;
