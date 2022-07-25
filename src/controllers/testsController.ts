@@ -1,5 +1,9 @@
 import { Request, Response } from "express";
 
-export async function createTest(req: Request, res: Response) {
-    
+import testsService, { TestInputs } from "../services/testsService.js";
+
+export async function postTest(req: Request, res: Response) {
+    const test: TestInputs = res.locals.data;
+    await testsService.saveTest(test);
+    res.sendStatus(201);
 }

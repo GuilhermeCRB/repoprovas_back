@@ -11,6 +11,7 @@ export function sanitizeTest(req: Request, res: Response, next: NextFunction) {
         name: stripHtml(test.name).result,
         pdfUrl: stripHtml(test.pdfUrl).result,
         category: stripHtml(test.category).result,
+        discipline: stripHtml(test.discipline).result,
         teacher: stripHtml(test.teacher).result
     }
 
