@@ -20,10 +20,10 @@ model User {
 }
 
 model Teacher {
-  id          Int                   @id @default(autoincrement())
-  name        String                @unique
-  createdAT   DateTime?             @default(now()) @db.Timestamp(6)
-  discipline  TeacherDiscipline[]
+  id                 Int                   @id @default(autoincrement())
+  name               String                @unique
+  createdAT          DateTime?             @default(now()) @db.Timestamp(6)
+  teacherDiscipline  TeacherDiscipline[]
 
   @@map("teachers")
 }

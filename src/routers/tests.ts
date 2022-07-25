@@ -18,8 +18,5 @@ tests.get("/tests",
     validateToken,
     getTests
 );
-tests.get("/tests/teachers",
-    validateToken
-);
 
 export default tests;

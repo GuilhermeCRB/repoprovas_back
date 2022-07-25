@@ -28,6 +28,7 @@ function formatTest(testInputs: TestInputs, categoryId: number, teacherDisciplin
 
 async function getTestsByQuery(filter) {
     if(filter === "term") return await testsRepository.findTestsByTerm();
+    if(filter === "teacher") return await testsRepository.findTestsByTeatcher();
 }
 
 const testsService = {

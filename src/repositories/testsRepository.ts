@@ -44,18 +44,22 @@ async function findTestsByTerm() {
                 select: {
                     name: true,
                     teacherDiscipline: {
-                        select:{
-                            teacher: {
-                                select: {
-                                    name: true
-                                }
-                            },
+                        select: {
                             tests: {
                                 select: {
                                     name: true,
                                     pdfUrl: true,
+                                    teacherDiscipline: {
+                                        select: {
+                                            teacher: {
+                                                select: {
+                                                    name: true
+                                                }
+                                            }
+                                        }
+                                    },
                                     category: {
-                                        select:{
+                                        select: {
                                             name: true
                                         }
                                     }
@@ -70,6 +74,37 @@ async function findTestsByTerm() {
     });
 }
 
+async function findTestsByTeatcher() {
+    return await db.teacher.findMany({
+        select: {
+            name: true,
+            teacherDiscipline: {
+                select: {
+                    tests: {
+                        select: {
+                            name: true,
+                            pdfUrl: true,
+                            teacherDiscipline: {
+                                select: {
+                                    discipline: {
+                                        select: {
+                                            name: true
+                                        }
+                                    }
+                                }
+                            },
+                            category: {
+                                select: {
+                                    name: true
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
 
 const testsRepository = {
     findCategoryByName,
@@ -77,7 +112,8 @@ const testsRepository = {
     findTeacherByName,
     findTeacherDiscipline,
     saveTest,
-    findTestsByTerm
+    findTestsByTerm,
+    findTestsByTeatcher
 }
 
 export default testsRepository;
