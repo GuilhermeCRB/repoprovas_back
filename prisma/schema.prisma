@@ -47,12 +47,12 @@ model Term {
 }
 
 model Discipline {
-  id        Int                   @id @default(autoincrement())
-  name      String                @unique
+  id        Int                           @id @default(autoincrement())
+  name      String                        @unique
   termId    Int       
-  createdAT DateTime?             @default(now()) @db.Timestamp(6)
-  term      Term                  @relation(fields: [termId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  teacher   TeacherDiscipline[]
+  createdAT DateTime?                     @default(now()) @db.Timestamp(6)
+  term      Term                          @relation(fields: [termId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  teacherDiscipline   TeacherDiscipline[]
 
   @@map("disciplines")
 }

@@ -36,12 +36,48 @@ async function saveTest(test: CreateTest) {
     });
 }
 
+async function findTestsByTerm() {
+    return await db.term.findMany({
+        select: {
+            number: true,
+            disciplines: {
+                select: {
+                    name: true,
+                    teacherDiscipline: {
+                        select:{
+                            teacher: {
+                                select: {
+                                    name: true
+                                }
+                            },
+                            tests: {
+                                select: {
+                                    name: true,
+                                    pdfUrl: true,
+                                    category: {
+                                        select:{
+                                            name: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        orderBy: { number: "asc" }
+    });
+}
+
+
 const testsRepository = {
     findCategoryByName,
     findDisciplineByName,
     findTeacherByName,
     findTeacherDiscipline,
-    saveTest
+    saveTest,
+    findTestsByTerm
 }
 
 export default testsRepository;

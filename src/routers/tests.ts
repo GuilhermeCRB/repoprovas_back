@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { postTest } from "../controllers/testsController.js";
+import { getTests, postTest } from "../controllers/testsController.js";
 import { sanitizeTest } from "../middlewares/sanitizeTest.js";
 import { validateSchema } from "../middlewares/validateSchema.js";
 import validateToken from "../middlewares/validateToken.js";
@@ -14,8 +14,9 @@ tests.post("/tests",
     validateSchema(testSchema),
     postTest
 );
-tests.get("/tests/disciplines",
-    validateToken
+tests.get("/tests",
+    validateToken,
+    getTests
 );
 tests.get("/tests/teachers",
     validateToken
