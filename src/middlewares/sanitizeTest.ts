@@ -6,8 +6,6 @@ import { TestInputs } from "../services/testsService.js";
 export function sanitizeTest(req: Request, res: Response, next: NextFunction) {
     const test: TestInputs = req.body;
 
-    console.log(test)
-
     const sanitizedTest: TestInputs = {
         ...test,
         name: stripHtml(test.name).result,

@@ -7,7 +7,7 @@ import userFactory from "./factories/userFactory.js";
 import testFactory from "./factories/testFactory.js";
 import databaseFactory from "./factories/databaseFactory.js";
 import accessRepository from "../src/repositories/accessRepository.js";
-import testsService, { TestInputs } from "../src/services/testsService.js";
+import { TestInputs } from "../src/services/testsService.js";
 import { CreateUser } from "../src/services/accessService.js";
 
 beforeEach(async () => {
@@ -34,6 +34,14 @@ describe("Access tests:", () => {
         expect(createdUser).not.toBeNull();
     });
 
+    it("Send status 422 if confirmation password is not sent", async () => {
+        const user: CreateUser = userFactory.createUser();
+        user.repeatedPassword = "";
+
+        const response = await supertest(app).post("/sign-up").send(user);
+        expect(response.statusCode).toBe(422);
+    });
+
     it("Given an email and a password, sign in a user.", async () => {
         const user: CreateUser = userFactory.createUser();
         await supertest(app).post("/sign-up").send(user);
@@ -44,6 +52,16 @@ describe("Access tests:", () => {
 
         const { token }: { token: string } = response.body;
         expect(token).not.toBeNull();
+    });
+
+    it("Block sign in if password is wrong.", async () => {
+        const user: CreateUser = userFactory.createUser();
+        await supertest(app).post("/sign-up").send(user);
+        delete user.repeatedPassword;
+        user.password = "wrongPassword";
+
+        const response = await supertest(app).post("/sign-in").send(user);
+        expect(response.statusCode).toBe(401);
     });
 });
 
@@ -56,6 +74,60 @@ describe("Tests tests:", () => {
 
         const response = await supertest(app).post("/tests").set("Authorization", `Bearer ${token}`).send(test);
         expect(response.statusCode).toBe(201);
+
+        const createdTest = db.test.findFirst();
+        expect(createdTest).not.toBeNull();
+    });
+
+    it("Should return all tests divided by terms.", async () => {
+        await databaseFactory();
+
+        const token = await testFactory.createToken();
+        const response = await supertest(app).get("/tests?filter=term").set("Authorization", `Bearer ${token}`);
+        expect(response.statusCode).toBe(200);
+    });
+
+    it("Should return all tests divided by teachers.", async () => {
+        await databaseFactory();
+
+        const token = await testFactory.createToken();
+        const response = await supertest(app).get("/tests?filter=teacher").set("Authorization", `Bearer ${token}`);
+        expect(response.statusCode).toBe(200);
+    });
+
+    it("Block user from posting a test if token is wrong or is not sent.", async () => {
+        const test = {
+            name: "test",
+            pdfUrl: "test",
+            category: "test",
+            discipline: "test",
+            teacher: "test"
+        };
+
+        const wrongToken = "wrongToken";
+        const wrongTokenResponse = await supertest(app).post("/tests").set("Authorization", `Bearer ${wrongToken}`).send(test);
+        expect(wrongTokenResponse.statusCode).toBe(403);
+
+        const noTokenResponse = await supertest(app).post("/tests").send(test);
+        expect(noTokenResponse.statusCode).toBe(401);
+    });
+
+    it("Block user from getting the tests divided by terms if token is wrong or is not sent.", async () => {
+        const wrongToken = "wrongToken";
+        const wrongTokenResponse = await supertest(app).get("/tests?filter=term").set("Authorization", `Bearer ${wrongToken}`);
+        expect(wrongTokenResponse.statusCode).toBe(403);
+
+        const noTokenResponse = await supertest(app).get("/tests?filter=term");
+        expect(noTokenResponse.statusCode).toBe(401);
+    });
+
+    it("Block user from getting the tests divided by teacher if token is wrong or is not sent.", async () => {
+        const wrongToken = "wrongToken";
+        const wrongTokenResponse = await supertest(app).get("/tests?filter=teacher").set("Authorization", `Bearer ${wrongToken}`);
+        expect(wrongTokenResponse.statusCode).toBe(403);
+
+        const noTokenResponse = await supertest(app).get("/tests?filter=teacher");
+        expect(noTokenResponse.statusCode).toBe(401);
     });
 });
 

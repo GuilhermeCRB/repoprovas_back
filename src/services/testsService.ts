@@ -29,7 +29,7 @@ async function formatTest(testInputs: TestInputs){
 
 async function getTestsByQuery(filter) {
     if(filter === "term") return await testsRepository.findTestsByTerm();
-    if(filter === "teacher") return await testsRepository.findTestsByTeatcher();
+    if(filter === "teacher") return await testsRepository.findTestsByTeacher();
 }
 
 const testsService = {

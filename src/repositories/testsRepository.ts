@@ -74,7 +74,7 @@ async function findTestsByTerm() {
     });
 }
 
-async function findTestsByTeatcher() {
+async function findTestsByTeacher() {
     return await db.teacher.findMany({
         select: {
             name: true,
@@ -113,7 +113,7 @@ const testsRepository = {
     findTeacherDiscipline,
     saveTest,
     findTestsByTerm,
-    findTestsByTeatcher
+    findTestsByTeacher
 }
 
 export default testsRepository;
