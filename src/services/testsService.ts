@@ -9,20 +9,21 @@ export type TestInputs = Omit<Test &
 export type CreateTest = Omit<Test, "id" | "createdAT">;
 
 async function saveTest(testInputs: TestInputs) {
+    const test: CreateTest = await formatTest(testInputs);
+    await testsRepository.saveTest(test);
+}
+
+async function formatTest(testInputs: TestInputs){
     const category = await testsRepository.findCategoryByName(testInputs.category);
     const discipline = await testsRepository.findDisciplineByName(testInputs.discipline);
     const teacher = await testsRepository.findTeacherByName(testInputs.teacher);
     const teacherDiscipline = await testsRepository.findTeacherDiscipline(discipline.id, teacher.id);
-    const test: CreateTest = formatTest(testInputs, category.id, teacherDiscipline.id);
-    await testsRepository.saveTest(test);
-}
 
-function formatTest(testInputs: TestInputs, categoryId: number, teacherDisciplineId: number){
     return {
         name: testInputs.name,
         pdfUrl: testInputs.pdfUrl,
-        categoryId,
-        teacherDisciplineId
+        categoryId: category.id,
+        teacherDisciplineId: teacherDiscipline.id
     };
 }
 
@@ -33,7 +34,8 @@ async function getTestsByQuery(filter) {
 
 const testsService = {
     saveTest,
-    getTestsByQuery
+    getTestsByQuery,
+    formatTest
 };
 
 export default testsService;

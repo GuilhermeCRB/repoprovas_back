@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 
-async function createUser() {
+function createUser() {
     const SALT = 10;
     const password = faker.internet.password();
     return {
