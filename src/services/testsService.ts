@@ -34,8 +34,7 @@ async function getTestsByQuery(filter) {
 
 const testsService = {
     saveTest,
-    getTestsByQuery,
-    formatTest
+    getTestsByQuery
 };
 
 export default testsService;
